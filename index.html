@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ATMOSPHERE - A premium weather dashboard with real-time data and cinematic atmospheric animations">
+    <meta name="theme-color" content="#667eea">
+    <title>ATMOSPHERE - Weather Dashboard</title>
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Preconnect to OpenWeatherMap for faster icon loading -->
+    <link rel="preconnect" href="https://openweathermap.org">
+</head>
+<body>
+    <!-- Atmospheric Background -->
+    <div class="atmosphere-bg bg-clear" id="atmosphereBg" aria-hidden="true"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
+        <div class="loading-orb"></div>
+        <p class="loading-message">Fetching atmospheric conditions...</p>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">ATMO<span>SPHERE</span></h1>
+            
+            <!-- Settings Panel -->
+            <div class="settings-panel">
+                <!-- Temperature Unit Toggle -->
+                <div class="setting-group">
+                    <span class="setting-label">Unit:</span>
+                    <button class="toggle-btn active" id="celsiusBtn" aria-pressed="true">°C</button>
+                    <button class="toggle-btn" id="fahrenheitBtn" aria-pressed="false">°F</button>
+                </div>
+                
+                <!-- Favorite Button -->
+                <button class="favorite-btn" id="favoriteBtn" aria-label="Add to favorites">
+                    <span>★</span>
+                    <span>Favorite</span>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Search Section -->
+        <section class="search-section glass-card" aria-label="Search weather">
+            <form class="search-container" id="searchForm">
+                <label for="searchInput" class="visually-hidden">Search for a city</label>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search for a city..." 
+                    autocomplete="off"
+                    aria-label="Search for a city"
+                >
+                <button type="submit" class="search-btn" id="searchBtn">Search</button>
+            </form>
+            
+            <!-- Recent Searches -->
+            <div class="recent-searches" id="recentSearchesSection">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Searches</h2>
+                    <button class="clear-btn" id="clearHistoryBtn" aria-label="Clear search history">Clear</button>
+                </div>
+                <div class="chips-container" id="recentChips" aria-label="Recent searches">
+                    <!-- Recent search chips will be inserted here -->
+                </div>
+            </div>
+            
+            <!-- Favorites -->
+            <div class="favorites" id="favoritesSection">
+                <div class="section-header">
+                    <h2 class="section-title">Favorites</h2>
+                </div>
+                <div class="chips-container" id="favoriteChips" aria-label="Favorite cities">
+                    <!-- Favorite chips will be inserted here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Error Card (hidden by default) -->
+            <div class="error-card glass-card hidden" id="errorCard" role="alert">
+                <div class="error-icon">⚠️</div>
+                <p class="error-message" id="errorMessage">An error occurred</p>
+                <button class="retry-btn" id="retryBtn">Retry</button>
+            </div>
+            
+            <!-- Empty State (shown initially) -->
+            <div class="empty-state glass-card" id="emptyState">
+                <div class="empty-icon">🌤️</div>
+                <p class="empty-message">Search for a city to get started</p>
+            </div>
+            
+            <!-- Current Weather -->
+            <section class="current-weather glass-card hidden" id="currentWeatherSection" aria-label="Current weather">
+                <div class="weather-header">
+                    <h2 class="city-name" id="cityName">--</h2>
+                    <p class="weather-date" id="weatherDate">--</p>
+                </div>
+                
+                <div class="weather-main">
+                    <img src="" alt="Weather icon" class="weather-icon-large" id="weatherIcon">
+                    <div class="temperature">
+                        <span id="temperature">--</span>
+                        <span class="temperature-unit" id="tempUnit">°C</span>
+                    </div>
+                    <p class="weather-description" id="weatherDescription">--</p>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <p class="detail-label">Feels Like</p>
+                        <p class="detail-value" id="feelsLike">--°</p>
+                    </div>
+                    <div class="detail-item">
+                        <p class="detail-label">High / Low</p>
+                        <p class="detail-value" id="highLow">--° / --°</p>
+                    </div>
+                    <div class="detail-item">
+                        <p class="detail-label">Humidity</p>
+                        <p class="detail-value" id="humidity">--%</p>
+                    </div>
+                    <div class="detail-item">
+                        <p class="detail-label">Wind</p>
+                        <p class="detail-value" id="wind">-- km/h</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Hourly Forecast -->
+            <section class="hourly-forecast glass-card hidden" id="hourlySection" aria-label="Hourly forecast">
+                <h2 class="section-title">Hourly Forecast</h2>
+                <div class="hourly-container" id="hourlyContainer">
+                    <!-- Hourly items will be inserted here -->
+                </div>
+            </section>
+            
+            <!-- 5-Day Forecast -->
+            <section class="daily-forecast glass-card hidden" id="dailySection" aria-label="5-day forecast">
+                <h2 class="section-title">5-Day Forecast</h2>
+                <div class="daily-forecast" id="dailyContainer">
+                    <!-- Daily items will be inserted here -->
+                </div>
+            </section>
+            
+            <!-- Weather Metrics Grid -->
+            <section class="metrics-grid hidden" id="metricsSection" aria-label="Weather metrics">
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">💧</div>
+                    <p class="metric-label">Humidity</p>
+                    <p class="metric-value" id="metricHumidity">--%</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">💨</div>
+                    <p class="metric-label">Wind Speed</p>
+                    <p class="metric-value" id="metricWind">-- km/h</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🌡️</div>
+                    <p class="metric-label">Pressure</p>
+                    <p class="metric-value" id="metricPressure">-- hPa</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">👁️</div>
+                    <p class="metric-label">Visibility</p>
+                    <p class="metric-value" id="metricVisibility">-- km</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🌅</div>
+                    <p class="metric-label">Sunrise</p>
+                    <p class="metric-value" id="metricSunrise">--:--</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🌇</div>
+                    <p class="metric-label">Sunset</p>
+                    <p class="metric-value" id="metricSunset">--:--</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🤒</div>
+                    <p class="metric-label">Feels Like</p>
+                    <p class="metric-value" id="metricFeelsLike">--°</p>
+                </div>
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">☀️</div>
+                    <p class="metric-label">UV Index</p>
+                    <p class="metric-value">N/A</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
