@@ -53,7 +53,7 @@ weather-dashboard/
 
 ## Live Demo
 
-[View Live Demo]()
+[View Live Demo]https://the-developers-arena-task-6.vercel.app/
 
 ## Getting Started
 
